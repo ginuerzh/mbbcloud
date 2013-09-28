@@ -2,17 +2,21 @@
 package models
 
 import (
-	"github.com/garyburd/redigo/redis"
 	"labix.org/v2/mgo"
 )
 
 var (
-	DB    *mgo.Database
-	Redis redis.Conn
+	DB *mgo.Database
 )
 
 const (
-	C_User = "User"
+	C_Router = "routers"
+	C_App    = "app"
+	C_User   = "users"
 
-	RedisNSUserOnline = "user:online"
+	NSPrefix      = "mbbcloud:"
+	NSRouters     = NSPrefix + "routers"
+	NSRouter      = NSPrefix + "router:"
+	NSRouterUsers = NSPrefix + "users:"
+	NSRouterUser  = NSPrefix + "user:"
 )

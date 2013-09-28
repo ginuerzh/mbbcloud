@@ -4,9 +4,23 @@ import (
 	"crypto/md5"
 	"fmt"
 	"github.com/astaxie/beego"
+	"github.com/garyburd/redigo/redis"
 	"github.com/ginuerzh/mbbcloud/errors"
 	"github.com/nu7hatch/gouuid"
 	"io"
+)
+
+func dial() (redis.Conn, error) {
+	c, err := redis.Dial("tcp", ":6379")
+	if err != nil {
+		return nil, err
+	}
+
+	return c, nil
+}
+
+var (
+	Pool *redis.Pool = redis.NewPool(dial, 3)
 )
 
 type BaseController struct {
@@ -33,5 +47,5 @@ func (this *BaseController) response(r interface{}, e *errors.Error) map[string]
 	if e == nil {
 		e = &errors.NoError
 	}
-	return map[string]interface{}{"response_data": r, "error": e.ErrObj()}
+	return map[string]interface{}{"r": e.ErrNo(), "err": e.ErrMsg(), "result": r}
 }
