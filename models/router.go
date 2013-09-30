@@ -31,10 +31,12 @@ type Router struct {
 	Users       []User    `bson:",omitempty"`
 }
 
-func (this *Router) FindBy(key string, value interface{}) (e *errors.Error) {
-	c := DB.C(C_Router)
+func (this *Router) FindOneBy(key string, value interface{}) (e *errors.Error) {
+	query := func(c *mgo.Collection) error {
+		return c.Find(bson.M{key: value}).One(this)
+	}
 
-	if err := c.Find(bson.M{key: value}).One(this); err != nil {
+	if err := withCollection(C_Router, query); err != nil {
 		if err == mgo.ErrNotFound {
 			e = &errors.UserNotFoundError
 		} else {
@@ -45,38 +47,41 @@ func (this *Router) FindBy(key string, value interface{}) (e *errors.Error) {
 	return
 }
 
-func (this *Router) Exists() (b bool) {
-	c := DB.C(C_Router)
-
-	count, _ := c.Find(bson.M{"imei": this.Imei}).Count()
-
-	if count > 0 {
-		b = true
+func (this *Router) Exists() bool {
+	count := 0
+	query := func(c *mgo.Collection) error {
+		var err error
+		count, err = c.Find(bson.M{"imei": this.Imei}).Count()
+		return err
 	}
 
-	return
+	if withCollection(C_Router, query); count > 0 {
+		return true
+	}
+
+	return false
 }
 
 func (this *Router) Save() *errors.Error {
-	c := DB.C(C_Router)
-
 	if len(this.Imei) == 0 || len(this.Mac) == 0 || len(this.Ip) == 0 {
 		return &errors.InvalidParamsError
 	}
 
-	if _, err := c.Upsert(bson.M{"imei": this.Imei}, this); err != nil {
+	upsert := func(c *mgo.Collection) error {
+		_, err := c.Upsert(bson.M{"imei": this.Imei}, this)
+		return err
+	}
+
+	if err := withCollection(C_Router, upsert); err != nil {
 		return &errors.DbError
 	}
 
 	return nil
 }
 
-func (this *Router) SetOnline(online bool) (e *errors.Error) {
-	c := DB.C(C_Router)
-
+func (this *Router) SetOnline(online bool) *errors.Error {
 	if online && len(this.AccessToken) == 0 {
-		e = &errors.AccessError
-		return
+		return &errors.AccessError
 	}
 
 	change := bson.M{
@@ -86,11 +91,14 @@ func (this *Router) SetOnline(online bool) (e *errors.Error) {
 		},
 	}
 
-	if err := c.Update(bson.M{"imei": this.Imei}, change); err != nil {
-		e = &errors.DbError
-		return
+	update := func(c *mgo.Collection) error {
+		return c.Update(bson.M{"imei": this.Imei}, change)
+	}
+
+	if err := withCollection(C_Router, update); err != nil {
+		return &errors.DbError
 	}
 
 	this.Online = online
-	return
+	return nil
 }

@@ -60,7 +60,7 @@ func (this *RouterController) Poll() {
 			break
 		}
 		log.Println(router.AccessToken)
-		if err := dbRouter.FindBy("access_token", router.AccessToken); err != nil {
+		if err := dbRouter.FindOneBy("access_token", router.AccessToken); err != nil {
 			this.Data["json"] = this.response(nil, err)
 			break
 		}

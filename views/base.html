@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <title>MBB Cloud Platform</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
+    <!-- Bootstrap -->
+    <link href="/css/bootstrap.css" rel="stylesheet" media="screen">
+
+    <!-- JavaScript plugins (requires jQuery) -->
+    <script src="/js/jquery-2.0.3.js"></script>
+	<script src="/js/jquery.json-2.4.js"></script>
+    <script src="/js/holder.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/js/bootstrap.js"></script>
+  </head>
+  <body>
+
+
+<style type="text/css">
+    a:hover {text-decoration: none}
+</style>
+
+<div class="container">
+	<h1>MBB Cloud Platform</h1>
+	<nav class="navbar navbar-default" role="navigation">
+	    <div class="collapse navbar-collapse navbar-ex1-collapse">
+	        <ul class="nav navbar-nav">
+	            	<li id="nav-statistics"><a href="/">统计</a></li>
+	            	<li id="nav-pub"><a href="/pub">发布</a></li>
+	        	</ul>
+	    </div>
+	</nav>
+</div>
+
+<div class="container">    
+	{{.LayoutContent}}
+</div>
+    
+<div class="container">
+</div>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<script src="/js/vendor/jquery.ui.widget.js"></script>
+<script src="/js/jquery.fileupload.js"></script>
+<script src="/js/jquery.iframe-transport.js"></script>
+
+<script>
+$(function() {
+	$("#icon-fileupload").fileupload({
+		dataType: 'json',
+		done: function(e, data) {
+			$.each(data.result.files, function(index, file) {
+				$("#icon-img").attr("src", file.thumbnailUrl)
+				$("#icon").attr("value", file.fid)
+			})
+		}
+	})
+	
+	$("#pub-btn").click(function() {
+		var app = {"name": $("#app-name").val(), 
+				"description": $("#app-desc").val(),
+				"version": $("#app-ver").val(), 
+				"icon": $("#icon").val()}
+		$.post("/app/pub",
+			$.toJSON(app),
+			function(data, status){
+				if (status == "success") {
+					alert("发布成功！")
+				} else {
+					alert("发布失败!" + status)
+				}
+			}
+		)
+	})
+	
+})
+</script>
+
+
+<form class="form-horizontal" role="form" method="post">
+	<div class="col-1g-2 col-lg-offset-1">
+		<img id="icon-img" data-src="holder.js/80x80" alt="">
+	</div>
+	<input type="hidden" id="icon" name="icon" value="">
+	<br />
+	<div class="form-group">
+		<label for="app-name" class="col-lg-1 control-label">软件名</label>
+		<div class="col-lg-6">
+			<input type="text" class="form-control" id="app-name" name="name" placeholder="App Name">
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="app-desc" class="col-lg-1 control-label">软件描述</label>
+		<div class="col-lg-6">
+			<textarea class="form-control" id="app-desc" name="description" rows="6" placeholder="App Description"></textarea>
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="app-name" class="col-lg-1 control-label">版本</label>
+		<div class="col-lg-3">
+			<input type="text" class="form-control" id="app-ver" name="version" placeholder="App Version">
+		</div>
+		
+	</div>
+	<div class="form-group">
+		<label for="app-desc" class="col-lg-1 control-label">LOGO</label>
+		<div class="col-lg-6">
+			<input id="icon-fileupload" type="file" name="file" data-url="/file/upload"/>
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-lg-offset-6 col-lg-1">
+			<button type="button" id="pub-btn" class="btn btn-info">发布</button>
+		</div>
+	</div>
+</form>

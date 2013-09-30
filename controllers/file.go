@@ -4,6 +4,7 @@ package controllers
 import (
 	"fmt"
 	"github.com/ginuerzh/mbbcloud/errors"
+	"github.com/ginuerzh/mbbcloud/models"
 	"github.com/ginuerzh/weedo"
 	"io"
 	"log"
@@ -14,7 +15,7 @@ type FileController struct {
 }
 
 func (this *FileController) Upload() {
-	file, header, err := this.GetFile("file")
+	filedata, header, err := this.GetFile("file")
 	if err != nil {
 		this.Data["json"] = this.response(nil, &errors.FileNotFoundError)
 		this.ServeJson()
@@ -22,15 +23,35 @@ func (this *FileController) Upload() {
 	}
 
 	log.Println(header.Filename)
-	fid, size, err := weedo.AssignUpload(header.Filename, file)
+	fid, size, err := weedo.AssignUpload(header.Filename, filedata)
 	if err != nil {
 		fmt.Println(err)
 		this.Data["json"] = this.response(nil, &errors.FileUploadError)
 		this.ServeJson()
 		return
 	}
-	resp := map[string]interface{}{"fid": fid, "name": header.Filename, "size": size}
-	this.Data["json"] = this.response(resp, nil)
+
+	var file models.File
+	file.Fid = fid
+	file.Name = header.Filename
+	file.Size = size
+	if err := file.Save(); err != nil {
+		fmt.Println(err)
+		this.Data["json"] = this.response(nil, err)
+		this.ServeJson()
+		return
+	}
+
+	url, _ := weedo.GetUrl(fid)
+
+	fileInfo := map[string]interface{}{
+		"fid": fid, "name": header.Filename, "size": size,
+		"url": url, "thumbnailUrl": url, "deleteUrl": url,
+		"deleteType": "DELETE"}
+	r := map[string]interface{}{"files": []interface{}{fileInfo}}
+
+	this.Data["json"] = r
+	//log.Println(this.Data["json"])
 	this.ServeJson()
 }
 
@@ -51,8 +72,15 @@ func (this *FileController) Download() {
 
 func (this *FileController) Delete() {
 	fid := this.Ctx.Input.Param[":all"]
+
+	file := models.File{Fid: fid}
+	if err := file.Delete(); err != nil {
+		log.Println(err)
+	}
+
 	if err := weedo.Delete(fid); err != nil {
 		log.Println(err)
+		this.Data["json"] = this.response(nil, &errors.DbError)
 	}
 
 	this.Data["json"] = this.response(nil, nil)
