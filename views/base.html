@@ -23,10 +23,20 @@
 <div class="container">
 	<h1>MBB Cloud Platform</h1>
 	<nav class="navbar navbar-default" role="navigation">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="/">Store</a>
+		</div>
 	    <div class="collapse navbar-collapse navbar-ex1-collapse">
 	        <ul class="nav navbar-nav">
-	            	<li id="nav-statistics"><a href="/">统计</a></li>
-	            	<li id="nav-pub"><a href="/pub">发布</a></li>
+	            	<li id="nav-app" class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Apps <b class="caret"></b></a>
+					<ul class="dropdown-menu">
+			          <li><a href="#">New</a></li>
+			          <li><a href="#">Top</a></li>
+			          <li><a href="/app/pub">Pub</a></li>
+			        </ul>
+				</li>
+				<li id="nav-router"><a href="/router">Routers</a>
 	        	</ul>
 	    </div>
 	</nav>

@@ -1,0 +1,52 @@
+
+<style type="text/css">
+body {
+	margin:0;
+	padding:0;
+}
+
+img.icon {
+	width: 100px; 
+	height: 100px;
+	background-color: lightgray;
+	border-radius: 15px;
+	}
+a.app-link {
+	margin: 0 auto
+}
+
+div.app-entry {
+	margin-bottom: 20px
+}
+</style>
+
+<script>
+	$(function(){
+		$.getJSON("/apps", function(data){
+			var apps = data['result']
+			$.each(apps, function(i, app) {
+				var col = $('<div class="col-lg-2 app-entry">')
+				var link = $('<a class="app-link">')
+			
+				link.attr("href", "/app/" + app['id'])
+				
+				var img = $('<img class="icon" data-src="holder.js/100x100">')
+				if (app['icon'].length > 0)
+					img.attr("src", app['icon'])
+				img.attr("title", app['description'])
+				link.append(img)
+				link.append("<br/>")
+		
+				var title = $('<span>')
+				title.text(app['name'])
+				col.append(link)
+				link.append(title)
+				
+				$("#app-list").append(col)
+			})
+		})
+	})
+</script>
+
+<div id="app-list" class="row">
+</div>

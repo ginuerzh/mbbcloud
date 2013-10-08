@@ -22,6 +22,7 @@ const (
 	NSRouter      = NSPrefix + "router:"
 	NSRouterUsers = NSPrefix + "users:"
 	NSRouterUser  = NSPrefix + "user:"
+	NSMQ          = NSPrefix + "mq:"
 )
 
 // these codes are inspired by Denis Papathanasiou's post:

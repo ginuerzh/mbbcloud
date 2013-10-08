@@ -10,7 +10,7 @@ import (
 )
 
 type App struct {
-	Id          bson.ObjectId `json:"-" "bson:"_id,omitempty"`
+	Id          bson.ObjectId `json:"id" "bson:"_id,omitempty"`
 	Name        string        `json:"name"`
 	Description string        `json:"description"`
 	Version     string        `json:"version" bson:",omitempty"`

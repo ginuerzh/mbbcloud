@@ -2,9 +2,13 @@
 <script src="/js/jquery.fileupload.js"></script>
 <script src="/js/jquery.iframe-transport.js"></script>
 
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/jquery.fileupload-ui.css">
+
 <script>
 $(function() {
 	$("#icon-fileupload").fileupload({
+		url: '/file/upload',
 		dataType: 'json',
 		done: function(e, data) {
 			$.each(data.result.files, function(index, file) {
@@ -14,11 +18,23 @@ $(function() {
 		}
 	})
 	
+	$("#app-fileupload").fileupload({
+		url: '/file/upload',
+		dataType: 'json',
+		done: function(e, data) {
+			$.each(data.result.files, function(index, file) {
+				$("#app-file").text(file.name)
+				$("#app").attr("value", file.fid)
+			})
+		}
+	})
+	
 	$("#pub-btn").click(function() {
 		var app = {"name": $("#app-name").val(), 
 				"description": $("#app-desc").val(),
 				"version": $("#app-ver").val(), 
-				"icon": $("#icon").val()}
+				"icon": $("#icon").val(),
+				"url": $("#app").val()}
 		$.post("/app/pub",
 			$.toJSON(app),
 			function(data, status){
@@ -33,13 +49,17 @@ $(function() {
 	
 })
 </script>
-
-
 <form class="form-horizontal" role="form" method="post">
 	<div class="col-1g-2 col-lg-offset-1">
 		<img id="icon-img" data-src="holder.js/80x80" alt="">
+		&nbsp;
+		<span class="btn btn-success fileinput-button">
+        		<span>Icon</span>
+        		<!-- The file input field used as target for the file upload widget -->
+        		<input id="icon-fileupload" type="file" name="file">
+			<input type="hidden" id="icon" name="icon" value="">
+    		</span>
 	</div>
-	<input type="hidden" id="icon" name="icon" value="">
 	<br />
 	<div class="form-group">
 		<label for="app-name" class="col-lg-1 control-label">软件名</label>
@@ -61,14 +81,20 @@ $(function() {
 		
 	</div>
 	<div class="form-group">
-		<label for="app-desc" class="col-lg-1 control-label">LOGO</label>
+		<label for="app-desc" class="col-lg-1 control-label">文件</label>
 		<div class="col-lg-6">
-			<input id="icon-fileupload" type="file" name="file" data-url="/file/upload"/>
+			<span class="btn btn-success fileinput-button">
+	        		<span>App File</span>
+	        		<!-- The file input field used as target for the file upload widget -->
+	        		<input id="app-fileupload" type="file" name="file">
+				<input type="hidden" id="app" name="url" value="">
+	    		</span>	
+			<span id="app-file"></span>
 		</div>
 	</div>
 	<div class="form-group">
-		<div class="col-lg-offset-6 col-lg-1">
-			<button type="button" id="pub-btn" class="btn btn-info">发布</button>
+		<div class="col-lg-offset-6 col-lg-2">
+			&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" id="pub-btn" class="btn btn-info">发布</button>
 		</div>
 	</div>
 </form>

@@ -20,7 +20,8 @@ func dial() (redis.Conn, error) {
 }
 
 var (
-	Pool *redis.Pool = redis.NewPool(dial, 3)
+	RedisPool *redis.Pool = redis.NewPool(dial, 3)
+	pageSize  int         = 12
 )
 
 type BaseController struct {

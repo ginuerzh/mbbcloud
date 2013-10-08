@@ -9,11 +9,33 @@ import (
 	//"labix.org/v2/mgo"
 	//"labix.org/v2/mgo/bson"
 	"github.com/ginuerzh/mbbcloud/errors"
+	"strings"
 	"time"
 )
 
 type RouterController struct {
 	BaseController
+}
+
+func (this *RouterController) RouterList() {
+	var routers models.RouterList
+
+	if err := routers.FindAll(0, pageSize); err != nil {
+		this.Data["json"] = this.response(nil, err)
+		this.ServeJson()
+		return
+	}
+
+	list := routers.Routers()
+
+	for i, _ := range list {
+		if time.Since(list[i].LastAccess) < 5*time.Minute {
+			list[i].Online = true
+		}
+	}
+
+	this.Data["json"] = this.response(list, nil)
+	this.ServeJson()
 }
 
 func (this *RouterController) Login() {
@@ -78,7 +100,20 @@ func (this *RouterController) Poll() {
 			break
 		}
 
+		c := RedisPool.Get()
+		defer c.Close()
+
 		r := map[string]interface{}{"type": "info", "msg": "ok"}
+
+		reply, _ := c.Do("RPOP", models.NSMQ+router.Imei)
+		if v, ok := reply.(string); ok {
+			z := strings.SplitN(v, ":", 2)
+			if len(z) == 2 {
+				r["type"] = z[0]
+				r["msg"] = z[1]
+			}
+		}
+
 		this.Data["json"] = this.response(r, nil)
 		break
 	}
