@@ -24,10 +24,10 @@ type Router struct {
 	Upload      uint64    `json:"upload"`
 	CurDownlod  uint64    `json:"cur_download" bson:"cur_download,omitempty"`
 	CurUpload   uint64    `json:"cur_upload" bson:"cur_upload,omitempty"`
-	Online      bool      `json:"online"`
+	Online      bool      `json:"online" bson:"-"`
 	LoginTime   time.Time `json:"login_time" bson:"login_time"`
 	LastAccess  time.Time `json:"last_access" bson:"last_access,omitempty"`
-	AccessToken string    `json:"access_token" bson:"access_token,omitempty"`
+	AccessToken string    `json:"access_token" bson:"-"`
 	Users       []User    `json:"users" bson:",omitempty"`
 }
 

@@ -2,11 +2,10 @@
 package controllers
 
 import (
-	"encoding/json"
-	"github.com/ginuerzh/mbbcloud/errors"
-	"github.com/ginuerzh/mbbcloud/models"
-	//"github.com/ginuerzh/weedo"
-	"log"
+//"github.com/ginuerzh/mbbcloud/errors"
+//"github.com/ginuerzh/mbbcloud/models"
+//"github.com/ginuerzh/weedo"
+//"log"
 )
 
 type WebController struct {
@@ -23,27 +22,14 @@ func (this *WebController) PubGet() {
 	this.TplNames = "pub.html"
 }
 
-func (this *WebController) PubPost() {
-	var app models.App
+func (this *WebController) Apps() {
+	this.Layout = "base.html"
+	this.TplNames = "store.html"
+}
 
-	for {
-		//log.Println(string(this.Ctx.Input.RequestBody))
-		if err := json.Unmarshal(this.Ctx.Input.RequestBody, &app); err != nil {
-			log.Println(err)
-			this.Data["json"] = this.response(nil, &errors.JsonError)
-			break
-		}
-		if err := app.Save(); err != nil {
-			this.Data["json"] = this.response(nil, &errors.JsonError)
-			break
-		}
-
-		r := map[string]string{"id": app.Id.String()}
-		this.Data["json"] = this.response(r, nil)
-		break
-	}
-
-	this.ServeJson()
+func (this *WebController) Routers() {
+	this.Layout = "base.html"
+	this.TplNames = "router.html"
 }
 
 func (this *WebController) SendMessage() {
@@ -54,7 +40,7 @@ func (this *WebController) SendMessage() {
 	c := RedisPool.Get()
 	defer c.Close()
 
-	c.Do("LPUSH", models.NSMQ+id, msgType+":"+msg)
+	c.Do("LPUSH", NSMQ+id, msgType+":"+msg)
 
 	this.Data["json"] = this.response(nil, nil)
 	this.ServeJson()

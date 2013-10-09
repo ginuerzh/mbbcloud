@@ -8,6 +8,7 @@ import (
 	"log"
 	//"labix.org/v2/mgo"
 	//"labix.org/v2/mgo/bson"
+	"github.com/garyburd/redigo/redis"
 	"github.com/ginuerzh/mbbcloud/errors"
 	"strings"
 	"time"
@@ -56,14 +57,16 @@ func (this *RouterController) Login() {
 			break
 		}
 
-		router.AccessToken = this.uuid()
+		token := this.uuid()
 
-		if err := router.SetOnline(true); err != nil {
-			this.Data["json"] = this.response(nil, err)
-			break
-		}
+		c := RedisPool.Get()
+		defer c.Close()
+		c.Send("SET", NSRouter+token, router.Imei)
+		c.Send("EXPIRE", NSRouter+token, ttl)
+		c.Flush()
+		c.Receive()
 
-		r := map[string]string{"access_token": router.AccessToken}
+		r := map[string]string{"access_token": token}
 		this.Data["json"] = this.response(r, nil)
 
 		break
@@ -82,7 +85,18 @@ func (this *RouterController) Poll() {
 			break
 		}
 		log.Println(router.AccessToken)
-		if err := dbRouter.FindOneBy("access_token", router.AccessToken); err != nil {
+
+		c := RedisPool.Get()
+		defer c.Close()
+		if s, err := redis.String(c.Do("GET", NSRouter+router.AccessToken)); err != nil {
+			this.Data["json"] = this.response(nil, &errors.AuthError)
+			break
+		} else {
+			router.Imei = s
+			c.Do("EXPIRE", NSRouter+router.AccessToken, ttl)
+		}
+
+		if err := dbRouter.FindOneBy("imei", router.Imei); err != nil {
 			this.Data["json"] = this.response(nil, err)
 			break
 		}
@@ -100,14 +114,10 @@ func (this *RouterController) Poll() {
 			break
 		}
 
-		c := RedisPool.Get()
-		defer c.Close()
-
 		r := map[string]interface{}{"type": "info", "msg": "ok"}
 
-		reply, _ := c.Do("RPOP", models.NSMQ+router.Imei)
-		if v, ok := reply.(string); ok {
-			z := strings.SplitN(v, ":", 2)
+		if s, err := redis.String(c.Do("RPOP", NSMQ+router.Imei)); err == nil {
+			z := strings.SplitN(s, ":", 2)
 			if len(z) == 2 {
 				r["type"] = z[0]
 				r["msg"] = z[1]

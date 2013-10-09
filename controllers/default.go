@@ -8,7 +8,25 @@ import (
 	"github.com/ginuerzh/mbbcloud/errors"
 	"github.com/nu7hatch/gouuid"
 	"io"
+	"time"
 )
+
+var (
+	RedisPool *redis.Pool = redis.NewPool(dial, 3)
+	pageSize  int         = 12
+	ttl                   = 5 * time.Minute
+
+	NSPrefix      = "mbbcloud:"
+	NSRouters     = NSPrefix + "routers"
+	NSRouter      = NSPrefix + "router:"
+	NSRouterUsers = NSPrefix + "users:"
+	NSRouterUser  = NSPrefix + "user:"
+	NSMQ          = NSPrefix + "mq:"
+)
+
+type BaseController struct {
+	beego.Controller
+}
 
 func dial() (redis.Conn, error) {
 	c, err := redis.Dial("tcp", ":6379")
@@ -17,15 +35,6 @@ func dial() (redis.Conn, error) {
 	}
 
 	return c, nil
-}
-
-var (
-	RedisPool *redis.Pool = redis.NewPool(dial, 3)
-	pageSize  int         = 12
-)
-
-type BaseController struct {
-	beego.Controller
 }
 
 func (this *BaseController) uuid() string {

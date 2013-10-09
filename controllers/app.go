@@ -2,11 +2,11 @@
 package controllers
 
 import (
-	//"encoding/json"
-	//"github.com/ginuerzh/mbbcloud/errors"
+	"encoding/json"
+	"github.com/ginuerzh/mbbcloud/errors"
 	"github.com/ginuerzh/mbbcloud/models"
 	//"github.com/ginuerzh/weedo"
-	//"log"
+	"log"
 )
 
 type AppController struct {
@@ -41,5 +41,28 @@ func (this *AppController) AppList() {
 		}
 	}
 	this.Data["json"] = this.response(list, nil)
+	this.ServeJson()
+}
+
+func (this *AppController) Pub() {
+	var app models.App
+
+	for {
+		//log.Println(string(this.Ctx.Input.RequestBody))
+		if err := json.Unmarshal(this.Ctx.Input.RequestBody, &app); err != nil {
+			log.Println(err)
+			this.Data["json"] = this.response(nil, &errors.JsonError)
+			break
+		}
+		if err := app.Save(); err != nil {
+			this.Data["json"] = this.response(nil, &errors.JsonError)
+			break
+		}
+
+		r := map[string]string{"id": app.Id.String()}
+		this.Data["json"] = this.response(r, nil)
+		break
+	}
+
 	this.ServeJson()
 }

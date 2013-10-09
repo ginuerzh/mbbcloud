@@ -22,7 +22,7 @@ div.app-entry {
 
 <script>
 	$(function(){
-		$.getJSON("/apps", function(data){
+		$.getJSON("/app/list", function(data){
 			var apps = data['result']
 			$.each(apps, function(i, app) {
 				var col = $('<div class="col-lg-2 app-entry">')
