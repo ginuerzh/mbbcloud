@@ -44,6 +44,10 @@ func (this *AppController) AppList() {
 	this.ServeJson()
 }
 
+func (this *AppController) App() {
+
+}
+
 func (this *AppController) Pub() {
 	var app models.App
 

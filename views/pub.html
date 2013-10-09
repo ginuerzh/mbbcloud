@@ -17,6 +17,7 @@ $(function() {
 	$("#icon-fileupload").fileupload({
 		url: '/file/upload',
 		dataType: 'json',
+		acceptFileTypes: /(\.|\/)(jpg|png)$/i,
 		add: function(e, data) {
 			$('#icon-progress .progress-bar').css('width', '0%')
 			$("#icon-progress").show()
@@ -105,7 +106,7 @@ $(function() {
 				return
 			}
 			$("#btn-app-del").hide()
-			$("app-progress").hide()
+			$("#app-progress").hide()
 			$("#app-filename").text("")
 			$("#app").attr("value", "")
 			$("#btn-app-fileupload").show()
@@ -113,6 +114,7 @@ $(function() {
 	})
 })
 </script>
+<span class="text-danger" id="warning"></span>
 <form class="form-horizontal" role="form" method="post">
 	<div class="col-1g-2 col-lg-offset-1">
 		<img id="icon-img" data-src="holder.js/80x80" alt="">
@@ -123,7 +125,9 @@ $(function() {
         		<input id="icon-fileupload" type="file" name="file">
 			<input type="hidden" id="icon" name="icon" value="">
     		</span>
-		<button type="button" class="btn btn-link btn-xs btn-del" id="btn-icon-del"><span class="glyphicon glyphicon-remove" /></button>
+		<button type="button" class="btn btn-link btn-xs btn-del" id="btn-icon-del">
+			<span class="glyphicon glyphicon-remove">删除</span>
+		</button>
 	</div>
 	<div class="col-lg-offset-1 progress progress-striped" id="icon-progress">
 		<div class="progress-bar progress-bar-success" role="progressbar"></div>
@@ -158,7 +162,9 @@ $(function() {
 				<input type="hidden" id="app" name="url" value="">
 	    		</span>
 			<span id="app-filename"></span>
-			<button type="button" class="btn btn-link btn-xs btn-del" id="btn-app-del"><span class="glyphicon glyphicon-remove" /></button>
+			<button type="button" class="btn btn-link btn-xs btn-del" id="btn-app-del">
+				<span class="glyphicon glyphicon-remove">删除</span>
+			</button>
 			<div class="progress progress-striped pull-right" id="app-progress">
 				<div class="progress-bar progress-bar-success" role="progressbar"></div>
 			</div>

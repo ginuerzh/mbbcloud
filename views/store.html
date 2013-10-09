@@ -10,7 +10,8 @@ img.icon {
 	height: 100px;
 	background-color: lightgray;
 	border-radius: 15px;
-	}
+}
+
 a.app-link {
 	margin: 0 auto
 }
@@ -22,13 +23,13 @@ div.app-entry {
 
 <script>
 	$(function(){
-		$.getJSON("/app/list", function(data){
+		$.getJSON("/apps", function(data){
 			var apps = data['result']
 			$.each(apps, function(i, app) {
 				var col = $('<div class="col-lg-2 app-entry">')
 				var link = $('<a class="app-link">')
 			
-				link.attr("href", "/app/" + app['id'])
+				link.attr("href", "/web/app/" + app['id'])
 				
 				var img = $('<img class="icon" data-src="holder.js/100x100">')
 				if (app['icon'].length > 0)
