@@ -29,7 +29,7 @@ func (this *AppController) AppList() {
 		//list[i].Icon, _ = weedo.GetUrl(list[i].Icon)
 		//list[i].RUrl, _ = weedo.GetUrl(list[i].RUrl)
 		//list[i].IUrl, _ = weedo.GetUrl(list[i].IUrl)
-		uri := this.Ctx.Request.Host + "/file/"
+		uri := "http://" + this.Ctx.Request.Host + "/file/"
 		if len(list[i].Icon) > 0 {
 			list[i].Icon = uri + list[i].Icon
 		}

@@ -42,7 +42,7 @@ func (this *FileController) Upload() {
 		return
 	}
 
-	url, _ := weedo.GetUrl(fid)
+	url := "http://" + this.Ctx.Request.Host + "/file/" + fid
 
 	fileInfo := map[string]interface{}{
 		"fid": fid, "name": header.Filename, "size": size,
