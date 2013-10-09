@@ -83,6 +83,7 @@ func (this *FileController) Delete() {
 		this.Data["json"] = this.response(nil, &errors.DbError)
 	}
 
+	log.Println("delete file: " + fid)
 	this.Data["json"] = this.response(nil, nil)
 	this.ServeJson()
 }
