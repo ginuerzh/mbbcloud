@@ -4,6 +4,9 @@ package models
 import (
 	"github.com/astaxie/beego"
 	"labix.org/v2/mgo"
+	//"log"
+	"strconv"
+	"time"
 )
 
 var (
@@ -16,6 +19,8 @@ const (
 	C_App    = "apps"
 	C_User   = "users"
 	C_File   = "files"
+
+	JsonTimeFormat = "2006-01-02 15:04:05"
 )
 
 // these codes are inspired by Denis Papathanasiou's post:
@@ -36,4 +41,26 @@ func withCollection(collection string, f func(*mgo.Collection) error) error {
 	defer s.Close()
 	c := s.DB(db).C(collection)
 	return f(c)
+}
+
+type JsonTime struct {
+	time.Time
+}
+
+func NewJsonTime(t time.Time) JsonTime {
+	return JsonTime{t}
+}
+
+func (t JsonTime) MarshalJSON() ([]byte, error) {
+	return []byte(strconv.Quote(t.Format(JsonTimeFormat))), nil
+}
+
+func (t *JsonTime) UnmarshalJSON(s []byte) (err error) {
+	q, err := strconv.Unquote(string(s))
+	if err != nil {
+		return err
+	}
+
+	t.Time, err = time.Parse(JsonTimeFormat, q)
+	return
 }

@@ -5,13 +5,16 @@ import (
 	"github.com/ginuerzh/mbbcloud/errors"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
+	"time"
 )
 
 type File struct {
 	Fid         string
-	Name        string
-	Size        int
-	ContentType string `bson:"content-type"`
+	Name        string `bson:"filename"`
+	Size        int    `bson:"length"`
+	Md5         string
+	ContentType string    `bson:"contentType"`
+	UploadDate  time.Time `bson:"uploadDate"`
 }
 
 func (this *File) FindOneBy(key string, value interface{}) (e *errors.Error) {

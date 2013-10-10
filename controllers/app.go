@@ -41,9 +41,6 @@ func (this *AppController) AppList() {
 
 		list[i].IUrl = ""
 		list[i].AUrl = ""
-
-		list[i].JPubTime = this.timeString(list[i].PubTime)
-		list[i].JUpdateTime = this.timeString(list[i].UpdateTime)
 	}
 	this.Data["json"] = this.response(list, nil)
 	this.ServeJson()
@@ -67,8 +64,6 @@ func (this *AppController) App() {
 		app.IUrl = this.fileUrl(app.IUrl)
 		app.AUrl = this.fileUrl(app.AUrl)
 		this.Data["json"] = this.response(&app, nil)
-		app.JPubTime = this.timeString(app.PubTime)
-		app.JUpdateTime = this.timeString(app.UpdateTime)
 	}
 
 	this.ServeJson()
@@ -85,7 +80,7 @@ func (this *AppController) Pub() {
 			break
 		}
 
-		app.PubTime = bson.Now()
+		app.PubTime = models.NewJsonTime(bson.Now())
 		app.UpdateTime = app.PubTime
 		if err := app.Save(); err != nil {
 			this.Data["json"] = this.response(nil, &errors.JsonError)

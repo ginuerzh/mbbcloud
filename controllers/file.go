@@ -7,7 +7,9 @@ import (
 	"github.com/ginuerzh/mbbcloud/models"
 	"github.com/ginuerzh/weedo"
 	"io"
+	"labix.org/v2/mgo/bson"
 	"log"
+	//"time"
 )
 
 type FileController struct {
@@ -22,7 +24,6 @@ func (this *FileController) Upload() {
 		return
 	}
 
-	log.Println(header.Filename)
 	fid, size, err := weedo.AssignUpload(header.Filename, filedata)
 	if err != nil {
 		fmt.Println(err)
@@ -34,7 +35,10 @@ func (this *FileController) Upload() {
 	var file models.File
 	file.Fid = fid
 	file.Name = header.Filename
+	file.ContentType = header.Header.Get("Content-Type")
 	file.Size = size
+	file.Md5 = this.fileMd5(filedata)
+	file.UploadDate = bson.Now()
 	if err := file.Save(); err != nil {
 		fmt.Println(err)
 		this.Data["json"] = this.response(nil, err)
@@ -42,7 +46,7 @@ func (this *FileController) Upload() {
 		return
 	}
 
-	url := "http://" + this.Ctx.Request.Host + "/file/" + fid
+	url := this.fileUrl(fid)
 
 	fileInfo := map[string]interface{}{
 		"fid": fid, "name": header.Filename, "size": size,
@@ -56,7 +60,19 @@ func (this *FileController) Upload() {
 }
 
 func (this *FileController) Download() {
-	fid := this.Ctx.Input.Param[":all"]
+	//fid := this.Ctx.Input.Param[":all"]
+	id := this.Ctx.Input.Param[":id"]
+	key := this.Ctx.Input.Param[":key"]
+
+	fid := id + "," + key
+	log.Println(fid)
+	var f models.File
+
+	if err := f.FindOneBy("fid", fid); err != nil {
+		this.Data["json"] = this.response(nil, &errors.FileNotFoundError)
+		this.ServeJson()
+		return
+	}
 
 	file, err := weedo.Download(fid)
 	if err != nil {
@@ -64,10 +80,10 @@ func (this *FileController) Download() {
 		this.ServeJson()
 		return
 	}
-	//url, _ := weedo.GetUrl(fid)
-	//this.Redirect(url, 302)
 	defer file.Close()
 
+	this.Ctx.ResponseWriter.Header().Set("Content-Type", f.ContentType)
+	this.Ctx.ResponseWriter.Header().Set("Content-Disposition", "filename="+f.Name)
 	io.Copy(this.Ctx.ResponseWriter, file)
 }
 

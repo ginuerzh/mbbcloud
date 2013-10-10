@@ -24,7 +24,7 @@ func main() {
 	beego.Router("/poll", &controllers.RouterController{}, "get,post:Poll")
 	beego.Router("/file/upload", &controllers.FileController{}, "post:Upload")
 	beego.Router("/file/del/:all", &controllers.FileController{}, "get:Delete")
-	beego.Router("/file/:all", &controllers.FileController{}, "get:Download")
+	beego.Router("/file/:id([0-9]+)/:key([0-9a-f]+)", &controllers.FileController{}, "get:Download")
 
 	beego.SetStaticPath("/images", "static/img")
 	beego.SetStaticPath("/css", "static/css")

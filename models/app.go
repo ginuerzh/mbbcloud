@@ -6,7 +6,6 @@ import (
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 	"log"
-	"time"
 )
 
 type App struct {
@@ -19,10 +18,8 @@ type App struct {
 	CUrl        string        `json:"curl" bson:"-"`
 	IUrl        string        `json:"iurl,omitempty" bson:"iurl,omitempty"`
 	AUrl        string        `json:"aurl,omitempty" bson:"aurl,omitempty"`
-	JPubTime    string        `json:"pub_time" bson:"-"`
-	PubTime     time.Time     `json:"-" bson:"pub_time"`
-	JUpdateTime string        `json:"update_time" bson:"-"`
-	UpdateTime  time.Time     `json:"-" bson:"update_time"`
+	PubTime     JsonTime      `json:"pub_time" bson:"pub_time"`
+	UpdateTime  JsonTime      `json:"update_time" bson:"update_time"`
 }
 
 type AppList struct {

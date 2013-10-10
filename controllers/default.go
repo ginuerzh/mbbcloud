@@ -6,8 +6,10 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/garyburd/redigo/redis"
 	"github.com/ginuerzh/mbbcloud/errors"
+	"github.com/ginuerzh/mbbcloud/models"
 	"github.com/nu7hatch/gouuid"
 	"io"
+	"strings"
 	"time"
 )
 
@@ -22,10 +24,6 @@ var (
 	NSRouterUsers = NSPrefix + "users:"
 	NSRouterUser  = NSPrefix + "user:"
 	NSMQ          = NSPrefix + "mq:"
-)
-
-const (
-	TIME_FORMAT = "2006-01-02 15:04:05"
 )
 
 type BaseController struct {
@@ -45,11 +43,11 @@ func (this *BaseController) fileUrl(fid string) string {
 	if len(fid) == 0 {
 		return ""
 	}
-	return "http://" + this.Ctx.Request.Host + "/file/" + fid
+	return "http://" + this.Ctx.Request.Host + "/file/" + strings.Join(strings.Split(fid, ","), "/")
 }
 
 func (this *BaseController) timeString(time time.Time) string {
-	return time.Format(TIME_FORMAT)
+	return time.Format(models.JsonTimeFormat)
 }
 
 func (this *BaseController) uuid() string {
@@ -65,6 +63,12 @@ func (this *BaseController) uuid() string {
 func (this *BaseController) md5(s string) string {
 	h := md5.New()
 	io.WriteString(h, s)
+	return fmt.Sprintf("%x", h.Sum(nil))
+}
+
+func (this *BaseController) fileMd5(file io.Reader) string {
+	h := md5.New()
+	io.Copy(h, file)
 	return fmt.Sprintf("%x", h.Sum(nil))
 }
 
