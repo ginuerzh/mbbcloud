@@ -7,10 +7,9 @@ img.icon {
 }
 
 table th {
-	width: 15%;
 	vertical-align: top;
-	padding-bottom: 5px;
 	padding-right: 15px;
+	padding-bottom: 5px;
 	text-align: right;
 }
 
@@ -21,21 +20,40 @@ table td {
 </style>
 
 <script>
+$(function(){
+	var url = window.location.href
+	var id = url.substring(url.lastIndexOf("/") + 1, url.length)
+	$.getJSON("/app/" + id, function(data) {
+		var app = data['result']
+		if (app == null) {
+			alert("获取信息失败！" + data['err'])
+		}
+		
+		$("#app-icon").attr("src", app['icon'])
+		$("#app-name").text(app['name'])
+		$("#app-desc").text(app['description'])
+		$("#app-pub-date").text(app['pub_time'])
+		$("#app-update-date").text(app['update_time'])
+		$("#app-version").text(app['version'])
+		$("#app-router-url").attr("href", app['url']).text(app['url'])
+		$("#app-ios-url").attr("href", app['iurl']).text(app['iurl'])
+		$("#app-android-url").attr("href", app['aurl']).text(app['aurl'])
+	})
+})
 </script>
 
-<img class="icon" data-src="holder.js/100x100"/>
-<br />
-<br />
-
 <div class="col-lg-6">
+<img id="app-icon" class="icon" data-src="holder.js/100x100"/>
+<br />
+<br />
 <table>
 	<tr>
 		<th>软件名：</th>
-		<td><span id="app-name">Samba</span></td>
+		<td><span id="app-name">App Name</span></td>
 	</tr>
 	<tr>
 		<th>描述：</th>
-		<td><p id="app-desc">Samba client for fsaf fasfsadfas fas fdsafasd fasd fas fdas fas fdasf as dfasdfa sdfa sdfasf asdf asd fas dfas f</p></td>
+		<td><p id="app-desc">App Description</p></td>
 	</tr>
 	<tr>
 		<th>发布日期：</th>
@@ -51,15 +69,15 @@ table td {
 	</tr>
 	<tr>
 		<th>Router：</th>
-		<td><a id="app-router-url" href="#">http://www.example</a></td>
+		<td><a id="app-router-url">http://www.example</a></td>
 	</tr>
 	<tr>
 		<th>IOS：</th>
-		<td><a id="app-ios-url" href="#">http://www.example</a></td>
+		<td><a id="app-ios-url">http://www.example</a></td>
 	</tr>
 	<tr>
 		<th>Android：</th>
-		<td><a id="app-ios-url" href="#">http://www.example</a></td>
+		<td><a id="app-android-url">http://www.example</a></td>
 	</tr>
 </table>
 </div>

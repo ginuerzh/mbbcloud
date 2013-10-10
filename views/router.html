@@ -1,6 +1,6 @@
 <script>
 $(function() {
-	$.getJSON("/router/list", function(data){
+	$.getJSON("/routers", function(data){
 		var routers = data['result']
 		$.each(routers, function(i, router) {
 			var tr = $("<tr>")
@@ -19,6 +19,13 @@ $(function() {
 	})
 })
 </script>
+
+<style>
+#nav-router a {
+	font-weight: bold;
+	color: green;
+}
+</style>
 
 <table class="table table-striped">
     <thead>

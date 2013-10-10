@@ -57,6 +57,7 @@ func (this *FileController) Upload() {
 
 func (this *FileController) Download() {
 	fid := this.Ctx.Input.Param[":all"]
+
 	file, err := weedo.Download(fid)
 	if err != nil {
 		this.Data["json"] = this.response(nil, &errors.FileNotFoundError)

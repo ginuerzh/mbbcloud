@@ -6,7 +6,13 @@ import (
 	"github.com/ginuerzh/mbbcloud/errors"
 	"github.com/ginuerzh/mbbcloud/models"
 	//"github.com/ginuerzh/weedo"
+	"labix.org/v2/mgo/bson"
 	"log"
+)
+
+const (
+	CLIENT_IOS     = "ios"
+	CLIENT_ANDROID = "android"
 )
 
 type AppController struct {
@@ -16,7 +22,7 @@ type AppController struct {
 func (this *AppController) AppList() {
 	var apps models.AppList
 
-	//client := this.GetString("client")
+	client := this.GetString("client")
 
 	if err := apps.FindAll(0, 0); err != nil {
 		this.Data["json"] = this.response(nil, err)
@@ -26,26 +32,46 @@ func (this *AppController) AppList() {
 
 	list := apps.Apps()
 	for i, _ := range list {
-		//list[i].Icon, _ = weedo.GetUrl(list[i].Icon)
-		//list[i].RUrl, _ = weedo.GetUrl(list[i].RUrl)
-		//list[i].IUrl, _ = weedo.GetUrl(list[i].IUrl)
-		uri := "http://" + this.Ctx.Request.Host + "/file/"
-		if len(list[i].Icon) > 0 {
-			list[i].Icon = uri + list[i].Icon
+		list[i].Icon = this.fileUrl(list[i].Icon)
+		list[i].RUrl = this.fileUrl(list[i].RUrl)
+		if client == CLIENT_IOS {
+			list[i].CUrl = this.fileUrl(list[i].IUrl)
 		}
-		if len(list[i].RUrl) > 0 {
-			list[i].RUrl = uri + list[i].RUrl
-		}
-		if len(list[i].IUrl) > 0 {
-			list[i].IUrl = uri + list[i].IUrl
-		}
+		list[i].CUrl = this.fileUrl(list[i].AUrl)
+
+		list[i].IUrl = ""
+		list[i].AUrl = ""
+
+		list[i].JPubTime = this.timeString(list[i].PubTime)
+		list[i].JUpdateTime = this.timeString(list[i].UpdateTime)
 	}
 	this.Data["json"] = this.response(list, nil)
 	this.ServeJson()
 }
 
 func (this *AppController) App() {
+	var app models.App
+	id := this.Ctx.Input.Param[":all"]
 
+	if !bson.IsObjectIdHex(id) {
+		this.Data["json"] = this.response(nil, &errors.InvalidParamsError)
+		this.ServeJson()
+		return
+	}
+
+	if err := app.FindOneBy("_id", bson.ObjectIdHex(id)); err != nil {
+		this.Data["json"] = this.response(nil, err)
+	} else {
+		app.Icon = this.fileUrl(app.Icon)
+		app.RUrl = this.fileUrl(app.RUrl)
+		app.IUrl = this.fileUrl(app.IUrl)
+		app.AUrl = this.fileUrl(app.AUrl)
+		this.Data["json"] = this.response(&app, nil)
+		app.JPubTime = this.timeString(app.PubTime)
+		app.JUpdateTime = this.timeString(app.UpdateTime)
+	}
+
+	this.ServeJson()
 }
 
 func (this *AppController) Pub() {
@@ -58,6 +84,9 @@ func (this *AppController) Pub() {
 			this.Data["json"] = this.response(nil, &errors.JsonError)
 			break
 		}
+
+		app.PubTime = bson.Now()
+		app.UpdateTime = app.PubTime
 		if err := app.Save(); err != nil {
 			this.Data["json"] = this.response(nil, &errors.JsonError)
 			break

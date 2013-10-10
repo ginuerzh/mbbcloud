@@ -5,20 +5,23 @@ import (
 	"github.com/ginuerzh/mbbcloud/errors"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
-	//"log"
+	"log"
 	"time"
 )
 
 type App struct {
-	Id          bson.ObjectId `json:"id" "bson:"_id,omitempty"`
+	Id          bson.ObjectId `json:"id" bson:"_id,omitempty"`
 	Name        string        `json:"name"`
 	Description string        `json:"description"`
 	Version     string        `json:"version" bson:",omitempty"`
 	Icon        string        `json:"icon" bson:",omitempty"`
 	RUrl        string        `json:"url" bson:"rurl,omitempty"`
-	IUrl        string        `json:"-" bson:"iurl,omitempty"`
-	AUrl        string        `json:"curl" bson:"aurl,omitempty"`
+	CUrl        string        `json:"curl" bson:"-"`
+	IUrl        string        `json:"iurl,omitempty" bson:"iurl,omitempty"`
+	AUrl        string        `json:"aurl,omitempty" bson:"aurl,omitempty"`
+	JPubTime    string        `json:"pub_time" bson:"-"`
 	PubTime     time.Time     `json:"-" bson:"pub_time"`
+	JUpdateTime string        `json:"update_time" bson:"-"`
 	UpdateTime  time.Time     `json:"-" bson:"update_time"`
 }
 
@@ -33,8 +36,9 @@ func (this *App) FindOneBy(key string, value interface{}) (e *errors.Error) {
 
 	if err := withCollection(C_App, query); err != nil {
 		if err == mgo.ErrNotFound {
-			e = &errors.UserNotFoundError
+			e = &errors.FileNotFoundError
 		} else {
+			log.Println(err)
 			e = &errors.DbError
 		}
 	}
@@ -45,7 +49,6 @@ func (this *App) FindOneBy(key string, value interface{}) (e *errors.Error) {
 func (this *App) Save() *errors.Error {
 	upsert := func(c *mgo.Collection) error {
 		this.Id = bson.NewObjectId()
-		this.PubTime = bson.Now()
 		return c.Insert(this)
 	}
 

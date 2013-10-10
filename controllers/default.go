@@ -24,6 +24,10 @@ var (
 	NSMQ          = NSPrefix + "mq:"
 )
 
+const (
+	TIME_FORMAT = "2006-01-02 15:04:05"
+)
+
 type BaseController struct {
 	beego.Controller
 }
@@ -35,6 +39,17 @@ func dial() (redis.Conn, error) {
 	}
 
 	return c, nil
+}
+
+func (this *BaseController) fileUrl(fid string) string {
+	if len(fid) == 0 {
+		return ""
+	}
+	return "http://" + this.Ctx.Request.Host + "/file/" + fid
+}
+
+func (this *BaseController) timeString(time time.Time) string {
+	return time.Format(TIME_FORMAT)
 }
 
 func (this *BaseController) uuid() string {
