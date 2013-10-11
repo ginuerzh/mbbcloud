@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/astaxie/beego"
+	//"github.com/astaxie/beego/context"
 	"github.com/ginuerzh/mbbcloud/controllers"
 	//"github.com/ginuerzh/mbbcloud/models"
 	//"icecar/filters"
@@ -36,6 +37,14 @@ func main() {
 	beego.SetStaticPath("/js", "static/js")
 
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
+	//var loginFilter = func(ctx *context.Context) {
+	//	log.Println("in fileter")
+	//}
+
+	//beego.AddFilter("/web/pub", "BeforRouter", loginFilter)
+	//beego.AddFilter("/web/routers", "BeforRouter", loginFilter)
+	//beego.AddFilter("/web/router/:id", "BeforRouter", loginFilter)
 
 	beego.Debug("start server")
 	beego.Run()
