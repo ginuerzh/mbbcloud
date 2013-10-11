@@ -1,0 +1,70 @@
+<script>
+$(function(){
+	
+	var url = window.location.href
+	var id = url.substring(url.lastIndexOf("/") + 1, url.length)
+	$.getJSON("/router/" + id, function(data) {
+		var router = data['result']
+		if (data['r'] != 0) {
+			alert("获取信息失败！" + data['err'])
+			return
+		}
+		$("#imei").text(router['id'])
+		$("#mac").text(router['mac'])
+		$("#ip").text(router['ip'])
+		var cur_upload = router['cur_upload'] / (1024 * 1024)
+		var cur_download = router['cur_download'] / (1024 * 1024)
+		$("#current").text(cur_upload.toFixed(2) + "/" + cur_download.toFixed(2))
+		var upload = router['upload'] / (1024 * 1024)
+		var download = router['download'] / (1024 * 1024)
+		$("#total").text(upload.toFixed(2) + "/" + download.toFixed(2))
+		$("#login").text(router['login_time'])
+		$.each(router['users'], function(i, user) {
+			var tr = $("<tr>")
+			tr.append($("<td>").text(user['mac']))
+			tr.append($("<td>").text(user['ip']))
+			tr.append($("<td>").text(user['duration']))
+			tr.append($("<td>").text(user['device']))
+			$("#users-tbody").append(tr)
+		})
+	})
+	
+})
+</script>
+
+<style>
+#tbody tr td {
+	padding-right: 20px;
+}
+
+span.title {
+	font-weight: bold;
+}
+</style>
+
+<table>
+	<tbody id="tbody">
+		<tr class="active">
+			<td><span class="title">IMEI: </span><span id="imei">fsdafsfsdf</span></td>
+			<td><span class="title">MAC: </span><span id="mac">00:11:22:33:44:55</span></td>
+			<td><span class="title">IP: </span><span id="ip">192.168.1.1</span></td>
+			<td><span class="title">Current(&uarr;/&darr; MB): </span><span id="current">fsdafsfsdf</span></td>
+			<td><span class="title">Total(&uarr;/&darr; MB): </span><span id="total">fsdafsfsdf</span></td>
+			<td><span class="title">Login: </span><span id="login">fsdafsfsdf</span></td>
+		</tr>
+	</tbody>
+<table>
+<br/>
+<span>用户列表</span>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>MAC</th>
+            <th>IP</th>
+			<th>Duration</th>
+			<th>Device Name</th>
+        </tr>
+    </thead>
+    <tbody id="users-tbody">
+    </tbody>
+</table>

@@ -2,10 +2,10 @@
 package controllers
 
 import (
-//"github.com/ginuerzh/mbbcloud/errors"
-//"github.com/ginuerzh/mbbcloud/models"
-//"github.com/ginuerzh/weedo"
-//"log"
+	//"github.com/ginuerzh/mbbcloud/errors"
+	//"github.com/ginuerzh/mbbcloud/models"
+	//"github.com/ginuerzh/weedo"
+	"log"
 )
 
 type WebController struct {
@@ -13,6 +13,7 @@ type WebController struct {
 }
 
 func (this *WebController) Get() {
+	log.Println(this.Ctx.Request.RemoteAddr)
 	this.Layout = "base.html"
 	this.TplNames = "store.html"
 }
@@ -39,7 +40,10 @@ func (this *WebController) Routers() {
 	this.Layout = "base.html"
 	this.TplNames = "router.html"
 }
-
+func (this *WebController) Router() {
+	this.Layout = "base.html"
+	this.TplNames = "router_info.html"
+}
 func (this *WebController) SendMessage() {
 	id := this.GetString("id")
 	msgType := this.GetString("type")

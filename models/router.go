@@ -10,10 +10,10 @@ import (
 )
 
 type User struct {
-	Device   string
-	Mac      string
-	Ip       string
-	Duration int
+	Device   string `json:"device"`
+	Mac      string `json:"mac"`
+	Ip       string `json:"ip"`
+	Duration int    `json:"duration"`
 }
 
 type Router struct {

@@ -39,6 +39,22 @@ func (this *RouterController) RouterList() {
 	this.ServeJson()
 }
 
+func (this *RouterController) Router() {
+	var router models.Router
+	id := this.Ctx.Input.Params(":id")
+	for {
+		if err := router.FindOneBy("imei", id); err != nil {
+			this.Data["json"] = this.response(nil, err)
+			break
+		}
+
+		this.Data["json"] = this.response(&router, nil)
+		break
+	}
+
+	this.ServeJson()
+}
+
 func (this *RouterController) Login() {
 	var router models.Router
 	//log.Println(string(this.Ctx.Input.RequestBody))

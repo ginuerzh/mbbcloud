@@ -10,6 +10,9 @@
 	color: green;
 }
 
+#icon-img {
+	border-radius: 15px;
+}
 .progress {width: 80px; margin-top: 5px}
 </style>
 
@@ -73,6 +76,7 @@ $(function() {
 		dataType: 'json',
 		acceptFileTypes: /(\.|\/)(jpg|png)$/i,
 		add: function(e, data) {
+			$("#update-btn").attr("disabled", "disabled")
 			$('#icon-progress .progress-bar').css('width', '0%')
 			$("#icon-progress").show()
 			data.submit()
@@ -91,12 +95,14 @@ $(function() {
 			})
 			$("#btn-icon-del").show()
 			$("#btn-icon-fileupload").hide()
+			$("#update-btn").attr("disabled", null)
 		}
 	})
 	$("#router-fileupload").fileupload({
 		url: '/file/upload',
 		dataType: 'json',
 		add: function(e, data) {
+			$("#update-btn").attr("disabled", "disabled")
 			$('#router-progress .progress-bar').css('width', '0%')
 			$("#router-progress").show()
 			data.submit()
@@ -115,12 +121,14 @@ $(function() {
 			})
 			$("#btn-router-del").show()
 			$("#btn-router-fileupload").hide()
+			$("#update-btn").attr("disabled", null)
 		}
 	})
 	$("#ios-fileupload").fileupload({
 		url: '/file/upload',
 		dataType: 'json',
 		add: function(e, data) {
+			$("#update-btn").attr("disabled", "disabled")
 			$('#ios-progress .progress-bar').css('width', '0%')
 			$("#ios-progress").show()
 			data.submit()
@@ -139,12 +147,14 @@ $(function() {
 			})
 			$("#btn-ios-del").show()
 			$("#btn-ios-fileupload").hide()
+			$("#update-btn").attr("disabled", null)
 		}
 	})
 	$("#android-fileupload").fileupload({
 		url: '/file/upload',
 		dataType: 'json',
 		add: function(e, data) {
+			$("#update-btn").attr("disabled", "disabled")
 			$('#android-progress .progress-bar').css('width', '0%')
 			$("#android-progress").show()
 			data.submit()
@@ -163,10 +173,12 @@ $(function() {
 			})
 			$("#btn-android-del").show()
 			$("#btn-android-fileupload").hide()
+			$("#update-btn").attr("disabled", null)
 		}
 	})
 	
 	$("#update-btn").click(function() {
+		$("#update-btn").attr("disabled", "disabled")
 		var app = {
 				"id": id,
 				"name": $("#app-name").val(), 
@@ -180,34 +192,43 @@ $(function() {
 			$.toJSON(app),
 			function(data, status){
 				if (status == "success") {
-					alert("更新成功！")
+					if (data['r'] != 0) {
+						alert("更新失败!" + data['err'])
+					} else {
+						alert("更新成功！")
+					}
 				} else {
 					alert("更新失败!" + status)
 				}
+				$("#update-btn").attr("disabled", null)
 			}
 		)
 	})
 	
 	$("#btn-icon-del").click(function(){
+		$("#update-btn").attr("disabled", "disabled")
 		fid = $("#icon").attr("value")
 		$.getJSON("/file/del/"+fid, function(data){
 			var r = data['r']
 			if (r != 0) {
-				alert("删除失败！")
+				alert("删除失败！" + data['err'])
 				return
 			}
 			$("#btn-icon-del").hide()
 			$("#icon-progress").hide()
+			$("#icon-img").attr("src", null)
 			$("#icon").attr("value", "")
 			$("#btn-icon-fileupload").show()
+			$("#update-btn").attr("disabled", null)
 		})
 	})
 	$("#btn-router-del").click(function(){
+		$("#update-btn").attr("disabled", "disabled")
 		fid = $("#router").attr("value")
 		$.getJSON("/file/del/"+fid, function(data){
 			var r = data['r']
 			if (r != 0) {
-				alert("删除失败！")
+				alert("删除失败！" + data['err'])
 				return
 			}
 			$("#btn-router-del").hide()
@@ -215,14 +236,16 @@ $(function() {
 			$("#router-filename").text("")
 			$("#router").attr("value", "")
 			$("#btn-router-fileupload").show()
+			$("#update-btn").attr("disabled", null)
 		})
 	})
 	$("#btn-ios-del").click(function(){
+		$("#update-btn").attr("disabled", "disabled")
 		fid = $("#ios").attr("value")
 		$.getJSON("/file/del/"+fid, function(data){
 			var r = data['r']
 			if (r != 0) {
-				alert("删除失败！")
+				alert("删除失败！" + data['err'])
 				return
 			}
 			$("#btn-ios-del").hide()
@@ -230,14 +253,16 @@ $(function() {
 			$("#ios-filename").text("")
 			$("#ios").attr("value", "")
 			$("#btn-ios-fileupload").show()
+			$("#update-btn").attr("disabled", null)
 		})
 	})
 	$("#btn-android-del").click(function(){
+		$("#update-btn").attr("disabled", "disabled")
 		fid = $("#android").attr("value")
 		$.getJSON("/file/del/"+fid, function(data){
 			var r = data['r']
 			if (r != 0) {
-				alert("删除失败！")
+				alert("删除失败！" + data['err'])
 				return
 			}
 			$("#btn-android-del").hide()
@@ -245,6 +270,7 @@ $(function() {
 			$("#android-filename").text("")
 			$("#android").attr("value", "")
 			$("#btn-android-fileupload").show()
+			$("#update-btn").attr("disabled", null)
 		})
 	})
 })

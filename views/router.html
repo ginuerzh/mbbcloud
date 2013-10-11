@@ -3,8 +3,9 @@ $(function() {
 	$.getJSON("/routers", function(data){
 		var routers = data['result']
 		$.each(routers, function(i, router) {
+			var a = $("<a>").attr("href", "/web/router/" + router['id']).text(router['id'])
 			var tr = $("<tr>")
-			tr.append($("<td>").text(router['id']))
+			tr.append($("<td>").append(a))
 			tr.append($("<td>").text(router['mac']))
 			tr.append($("<td>").text(router['ip']))
 			var cur_upload = router['cur_upload'] / (1024 * 1024)
@@ -18,6 +19,7 @@ $(function() {
 			else
 				tr.append($("<td>").text('N'))
 			tr.append($("<td>").text(router['login_time']))
+			tr.append($("<td>").text(router['last_access']))
 			$("#tbody").append(tr)
 		})
 	})
@@ -41,6 +43,7 @@ $(function() {
             <th>Total(&uarr;/&darr; MB)</th>
             <th>Online</th>
             <th>Login Time</th>
+			<th>Last Access</th>
         </tr>
     </thead>
     <tbody id="tbody">
