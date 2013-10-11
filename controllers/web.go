@@ -54,6 +54,7 @@ func (this *WebController) SendMessage() {
 
 	c.Do("LPUSH", NSMQ+id, msgType+":"+msg)
 
+	log.Printf("Send message %s(%s) to %s\n", msg, msgType, id)
 	this.Data["json"] = this.response(nil, nil)
 	this.ServeJson()
 }

@@ -15,15 +15,13 @@ $(function(){
 		var cur_upload = router['cur_upload'] / (1024 * 1024)
 		var cur_download = router['cur_download'] / (1024 * 1024)
 		$("#current").text(cur_upload.toFixed(2) + "/" + cur_download.toFixed(2))
-		var upload = router['upload'] / (1024 * 1024)
-		var download = router['download'] / (1024 * 1024)
-		$("#total").text(upload.toFixed(2) + "/" + download.toFixed(2))
+		$("#duration").text(parseDuration(router['duration']))
 		$("#login").text(router['login_time'])
 		$.each(router['users'], function(i, user) {
 			var tr = $("<tr>")
 			tr.append($("<td>").text(user['mac']))
 			tr.append($("<td>").text(user['ip']))
-			tr.append($("<td>").text(user['duration']))
+			tr.append($("<td>").text(parseDuration(user['duration'])))
 			tr.append($("<td>").text(user['device']))
 			$("#users-tbody").append(tr)
 		})
@@ -33,6 +31,11 @@ $(function(){
 </script>
 
 <style>
+#nav-router a {
+	font-weight: bold;
+	color: green;
+}
+
 #tbody tr td {
 	padding-right: 20px;
 }
@@ -45,12 +48,12 @@ span.title {
 <table>
 	<tbody id="tbody">
 		<tr class="active">
-			<td><span class="title">IMEI: </span><span id="imei">fsdafsfsdf</span></td>
-			<td><span class="title">MAC: </span><span id="mac">00:11:22:33:44:55</span></td>
-			<td><span class="title">IP: </span><span id="ip">192.168.1.1</span></td>
-			<td><span class="title">Current(&uarr;/&darr; MB): </span><span id="current">fsdafsfsdf</span></td>
-			<td><span class="title">Total(&uarr;/&darr; MB): </span><span id="total">fsdafsfsdf</span></td>
-			<td><span class="title">Login: </span><span id="login">fsdafsfsdf</span></td>
+			<td><span class="title">IMEI: </span><span id="imei"></span></td>
+			<td><span class="title">MAC: </span><span id="mac"></span></td>
+			<td><span class="title">IP: </span><span id="ip"></span></td>
+			<td><span class="title">Current(&uarr;/&darr; MB): </span><span id="current"></span></td>
+			<td><span class="title">Duration: </span><span id="duration"></span></td>
+			<td><span class="title">Login: </span><span id="login"></span></td>
 		</tr>
 	</tbody>
 <table>

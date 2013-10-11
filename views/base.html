@@ -15,6 +15,22 @@
   </head>
   <body>
 
+<script>
+var SECOND = 1
+var MIN = 60 * SECOND
+var HOUR = MIN * 60
+var DAY = 24 * HOUR
+
+function parseDuration(duration) {
+	var days = Math.floor(duration / DAY)
+	duration -= (days * DAY)
+	var hours = Math.floor(duration / HOUR)
+	duration -= (hours * HOUR)
+	var mins = Math.floor(duration / MIN)
+	var secs = duration - mins * MIN
+	return days + "天" + hours + "时" + mins + "分" + secs + "秒"
+}
+</script>
 
 <style type="text/css">
     a:hover {text-decoration: none}

@@ -1,4 +1,22 @@
 <script>
+function reboot(id) {
+	var b = confirm("确定重启？")
+	if (!b) return
+	$.post("/web/router/send_msg",
+		{"id": id, "type": "cmd", "msg":"reboot"},
+		function(data, status) {
+			if (status == "success") {
+				if (data['r'] == 0) {
+					alert("命令已生成!")
+				} else {
+					alert("发送失败！" + data['err'])
+				}
+			} else {
+				alert("发送失败！" + status)
+			}
+		})
+}
+
 $(function() {
 	$.getJSON("/routers", function(data){
 		var routers = data['result']
@@ -11,18 +29,29 @@ $(function() {
 			var cur_upload = router['cur_upload'] / (1024 * 1024)
 			var cur_download = router['cur_download'] / (1024 * 1024)
 			tr.append($("<td>").text(cur_upload.toFixed(2) + "/" + cur_download.toFixed(2)))
-			var upload = router['upload'] / (1024 * 1024)
-			var download = router['download'] / (1024 * 1024)
-			tr.append($("<td>").text(upload.toFixed(2) + "/" + download.toFixed(2)))
+			//var upload = router['upload'] / (1024 * 1024)
+			//var download = router['download'] / (1024 * 1024)
+			//tr.append($("<td>").text(upload.toFixed(2) + "/" + download.toFixed(2)))
+			
+			tr.append($("<td>").text(parseDuration(router['duration'])))
 			if (router['online'])
 				tr.append($("<td>").text('Y'))
 			else
 				tr.append($("<td>").text('N'))
 			tr.append($("<td>").text(router['login_time']))
 			tr.append($("<td>").text(router['last_access']))
+			
+			var btn = $('<button class="btn btn-link btn-xs btn-reboot" >').text("重启")
+			btn.attr("onclick", "reboot(" + router['id'] + ")")
+			tr.append($("<td>").append(btn))
+			if (!router['online']) {
+				btn.attr("disabled", "disabled")
+			}
+			
 			$("#tbody").append(tr)
 		})
 	})
+	
 })
 </script>
 
@@ -40,10 +69,11 @@ $(function() {
             <th>MAC</th>
             <th>IP</th>
             <th>Current(&uarr;/&darr; MB)</th>
-            <th>Total(&uarr;/&darr; MB)</th>
+			<th>Duration</th>
             <th>Online</th>
             <th>Login Time</th>
 			<th>Last Access</th>
+			<th>Operation</th>
         </tr>
     </thead>
     <tbody id="tbody">
