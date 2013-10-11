@@ -28,7 +28,8 @@ function parseDuration(duration) {
 	var hours = Math.floor(duration / HOUR)
 	duration -= (hours * HOUR)
 	var mins = Math.floor(duration / MIN)
-	var secs = duration - mins * MIN
+	duration -= duration - mins * MIN
+	var secs = Math.floor(duration / SECOND)
 	return days + "天" + hours + "时" + mins + "分" + secs + "秒"
 }
 </script>
