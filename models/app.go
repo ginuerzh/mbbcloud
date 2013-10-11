@@ -56,6 +56,50 @@ func (this *App) Save() *errors.Error {
 	return nil
 }
 
+func (this *App) Update() *errors.Error {
+	update := func(c *mgo.Collection) error {
+		return c.UpdateId(this.Id, this)
+	}
+
+	if err := withCollection(C_App, update); err != nil {
+		return &errors.DbError
+	}
+
+	return nil
+}
+
+func (this *App) Delete() *errors.Error {
+	remove := func(c *mgo.Collection) error {
+		if err := this.FindOneBy("_id", this.Id); err != nil {
+			return nil
+		}
+		file := File{}
+		if len(this.Icon) > 0 {
+			file.Fid = this.Icon
+			file.Delete()
+		}
+		if len(this.RUrl) > 0 {
+			file.Fid = this.RUrl
+			file.Delete()
+		}
+		if len(this.IUrl) > 0 {
+			file.Fid = this.IUrl
+			file.Delete()
+		}
+		if len(this.AUrl) > 0 {
+			file.Fid = this.AUrl
+			file.Delete()
+		}
+		c.RemoveId(this.Id)
+		return nil
+	}
+
+	if err := withCollection(C_App, remove); err != nil {
+		return &errors.DbError
+	}
+	return nil
+}
+
 func (this *AppList) find(selector interface{}, skip, limit int) *errors.Error {
 	query := func(c *mgo.Collection) error {
 		query := c.Find(selector).Skip(skip)

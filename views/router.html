@@ -7,8 +7,12 @@ $(function() {
 			tr.append($("<td>").text(router['id']))
 			tr.append($("<td>").text(router['mac']))
 			tr.append($("<td>").text(router['ip']))
-			tr.append($("<td>").text(router['download']))
-			tr.append($("<td>").text(router['upload']))
+			var cur_upload = router['cur_upload'] / (1024 * 1024)
+			var cur_download = router['cur_download'] / (1024 * 1024)
+			tr.append($("<td>").text(cur_upload.toFixed(2) + "/" + cur_download.toFixed(2)))
+			var upload = router['upload'] / (1024 * 1024)
+			var download = router['download'] / (1024 * 1024)
+			tr.append($("<td>").text(upload.toFixed(2) + "/" + download.toFixed(2)))
 			if (router['online'])
 				tr.append($("<td>").text('Y'))
 			else
@@ -33,13 +37,12 @@ $(function() {
             <th>IMEI</th>
             <th>MAC</th>
             <th>IP</th>
-            <th>Download(C/T)</th>
-            <th>Upload(C/T)</th>
+            <th>Current(&uarr;/&darr; MB)</th>
+            <th>Total(&uarr;/&darr; MB)</th>
             <th>Online</th>
             <th>Login Time</th>
         </tr>
     </thead>
-    <tbody id="tbody" >
-		<tr>
+    <tbody id="tbody">
     </tbody>
 </table>

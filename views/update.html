@@ -14,7 +14,57 @@
 </style>
 
 <script>
+
+function parseFid(url) {
+	var a = url.split("/")
+	if (a.length < 2) {
+		return ""
+	}
+	return a[a.length - 2] + "," + a[a.length - 1]
+}
 $(function() {
+	var url = window.location.href
+	var id = url.substring(url.lastIndexOf("/") + 1, url.length)
+	$.getJSON("/app/" + id, function(data) {
+		var app = data['result']
+		if (app == null) {
+			alert("获取信息失败！" + data['err'])
+		}
+		
+		$("#icon-img").attr("src", app['icon'])
+		$("#app-name").val(app['name'])
+		$("#app-desc").text(app['description'])
+		$("#app-ver").val(app['version'])
+		
+		if (app['icon'].length > 0) {
+			var fid = parseFid(app['icon'])
+			$("#icon").val(fid)
+			$("#btn-icon-fileupload").hide()
+			$("#btn-icon-del").show()
+		}
+		if (app['url'].length > 0) {
+			var fid = parseFid(app['url'])
+			$("#router").val(fid)
+			$("#router-filename").text(app['url'])
+			$("#btn-router-fileupload").hide()
+			$("#btn-router-del").show()
+		}
+		if (app['iurl'].length > 0) {
+			var fid = parseFid(app['iurl'])
+			$("#ios").val(fid)
+			$("#ios-filename").text(app['iurl'])
+			$("#btn-ios-fileupload").hide()
+			$("#btn-ios-del").show()
+		}
+		if (app['aurl'].length > 0) {
+			var fid = parseFid(app['aurl'])
+			$("#android").val(fid)
+			$("#android-filename").text(app['aurl'])
+			$("#btn-android-fileupload").hide()
+			$("#btn-android-del").show()
+		}
+	})
+	
 	$(".progress").hide()
 	$(".btn-del").hide()
 	
@@ -116,21 +166,23 @@ $(function() {
 		}
 	})
 	
-	$("#pub-btn").click(function() {
-		var app = {"name": $("#app-name").val(), 
+	$("#update-btn").click(function() {
+		var app = {
+				"id": id,
+				"name": $("#app-name").val(), 
 				"description": $("#app-desc").val(),
 				"version": $("#app-ver").val(), 
 				"icon": $("#icon").val(),
 				"url": $("#router").val(),
 				"iurl": $("#ios").val(),
 				"aurl": $("#android").val()}
-		$.post("/app/pub",
+		$.post("/app/update",
 			$.toJSON(app),
 			function(data, status){
 				if (status == "success") {
-					alert("发布成功！")
+					alert("更新成功！")
 				} else {
-					alert("发布失败!" + status)
+					alert("更新失败!" + status)
 				}
 			}
 		)
@@ -291,7 +343,7 @@ $(function() {
 	</div>
 	<div class="form-group">
 		<div class="col-lg-offset-6 col-lg-2">
-			&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" id="pub-btn" class="btn btn-info">发布</button>
+			&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" id="update-btn" class="btn btn-info">更新</button>
 		</div>
 	</div>
 </form>

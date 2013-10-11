@@ -2,10 +2,10 @@
 package controllers
 
 import (
-	//"github.com/ginuerzh/mbbcloud/errors"
-	//"github.com/ginuerzh/mbbcloud/models"
-	//"github.com/ginuerzh/weedo"
-	"log"
+//"github.com/ginuerzh/mbbcloud/errors"
+//"github.com/ginuerzh/mbbcloud/models"
+//"github.com/ginuerzh/weedo"
+//"log"
 )
 
 type WebController struct {
@@ -28,12 +28,13 @@ func (this *WebController) Apps() {
 }
 
 func (this *WebController) App() {
-	fid := this.Ctx.Input.Param[":all"]
-	log.Println(fid)
 	this.Layout = "base.html"
 	this.TplNames = "app.html"
 }
-
+func (this *WebController) UpdateApp() {
+	this.Layout = "base.html"
+	this.TplNames = "update.html"
+}
 func (this *WebController) Routers() {
 	this.Layout = "base.html"
 	this.TplNames = "router.html"

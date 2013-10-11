@@ -8,7 +8,7 @@ import (
 	"github.com/ginuerzh/weedo"
 	"io"
 	"labix.org/v2/mgo/bson"
-	"log"
+	//"log"
 	//"time"
 )
 
@@ -55,7 +55,6 @@ func (this *FileController) Upload() {
 	r := map[string]interface{}{"files": []interface{}{fileInfo}}
 
 	this.Data["json"] = r
-	//log.Println(this.Data["json"])
 	this.ServeJson()
 }
 
@@ -65,11 +64,10 @@ func (this *FileController) Download() {
 	key := this.Ctx.Input.Param[":key"]
 
 	fid := id + "," + key
-	log.Println(fid)
 	var f models.File
 
 	if err := f.FindOneBy("fid", fid); err != nil {
-		this.Data["json"] = this.response(nil, &errors.FileNotFoundError)
+		this.Data["json"] = this.response(nil, err)
 		this.ServeJson()
 		return
 	}
@@ -82,8 +80,8 @@ func (this *FileController) Download() {
 	}
 	defer file.Close()
 
-	this.Ctx.ResponseWriter.Header().Set("Content-Type", f.ContentType)
-	this.Ctx.ResponseWriter.Header().Set("Content-Disposition", "filename="+f.Name)
+	//this.Ctx.ResponseWriter.Header().Set("Content-Type", f.ContentType)
+	//this.Ctx.ResponseWriter.Header().Set("Content-Disposition", "filename="+f.Name)
 	io.Copy(this.Ctx.ResponseWriter, file)
 }
 
@@ -91,16 +89,8 @@ func (this *FileController) Delete() {
 	fid := this.Ctx.Input.Param[":all"]
 
 	file := models.File{Fid: fid}
-	if err := file.Delete(); err != nil {
-		log.Println(err)
-	}
+	file.Delete()
 
-	if err := weedo.Delete(fid); err != nil {
-		log.Println(err)
-		this.Data["json"] = this.response(nil, &errors.DbError)
-	}
-
-	log.Println("delete file: " + fid)
 	this.Data["json"] = this.response(nil, nil)
 	this.ServeJson()
 }

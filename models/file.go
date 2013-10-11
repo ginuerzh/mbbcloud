@@ -3,8 +3,10 @@ package models
 
 import (
 	"github.com/ginuerzh/mbbcloud/errors"
+	"github.com/ginuerzh/weedo"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
+	"log"
 	"time"
 )
 
@@ -42,7 +44,7 @@ func (this *File) Save() *errors.Error {
 	if err := withCollection(C_File, upsert); err != nil {
 		return &errors.DbError
 	}
-
+	log.Println("upload file " + this.Fid)
 	return nil
 }
 
@@ -63,7 +65,18 @@ func (this *File) Exists() bool {
 
 func (this *File) Delete() *errors.Error {
 	remove := func(c *mgo.Collection) error {
-		return c.Remove(bson.M{"fid": this.Fid})
+		if len(this.Fid) == 0 {
+			return nil
+		}
+		err := c.Remove(bson.M{"fid": this.Fid})
+		if err == nil {
+			err = weedo.Delete(this.Fid)
+		}
+		if err != nil {
+			log.Println(err)
+		}
+
+		return err
 	}
 
 	if err := withCollection(C_File, remove); err != nil {
@@ -71,5 +84,7 @@ func (this *File) Delete() *errors.Error {
 			return &errors.DbError
 		}
 	}
+
+	log.Println("delete file " + this.Fid)
 	return nil
 }

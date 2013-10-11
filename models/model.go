@@ -51,6 +51,10 @@ func NewJsonTime(t time.Time) JsonTime {
 	return JsonTime{t}
 }
 
+func (t JsonTime) Value() time.Time {
+	return t.Time
+}
+
 func (t JsonTime) MarshalJSON() ([]byte, error) {
 	return []byte(strconv.Quote(t.Format(JsonTimeFormat))), nil
 }

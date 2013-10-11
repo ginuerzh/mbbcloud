@@ -1,7 +1,7 @@
 <style type="text/css">
 img.icon {
-	width: 100px; 
-	height: 100px;
+	width: 80px; 
+	height: 80px;
 	background-color: lightgray;
 	border-radius: 15px;
 }
@@ -21,12 +21,16 @@ table td {
 
 <script>
 $(function(){
+	$("#app-update").hide()
+	$("#app-del").hide()
+	
 	var url = window.location.href
 	var id = url.substring(url.lastIndexOf("/") + 1, url.length)
 	$.getJSON("/app/" + id, function(data) {
 		var app = data['result']
 		if (app == null) {
 			alert("获取信息失败！" + data['err'])
+			return
 		}
 		
 		$("#app-icon").attr("src", app['icon'])
@@ -38,46 +42,74 @@ $(function(){
 		$("#app-router-url").attr("href", app['url']).text(app['url'])
 		$("#app-ios-url").attr("href", app['iurl']).text(app['iurl'])
 		$("#app-android-url").attr("href", app['aurl']).text(app['aurl'])
+		
+		$("#app-del").attr("value", "/app/del/" + app['id'])
+		$("#app-update").attr("href", "/web/app/update/" + app['id'])
+		$("#app-update").show()
+		$("#app-del").show()
+	})
+	
+	$("#app-del").click(function(){
+		var r = confirm("确定删除?")
+		if (r) {
+			$.getJSON($(this).attr("value"), function(data){
+				if (data['r'] == 0) {
+					alert("删除成功！")
+					window.location.href = "/web/apps"
+				} else {
+					alert("删除失败！" + data['err'])
+				}
+			})
+		}
 	})
 })
 </script>
 
-<div class="col-lg-6">
-<img id="app-icon" class="icon" data-src="holder.js/100x100"/>
+<div class="row">
+	<div class="col-lg-1">
+		<img id="app-icon" class="icon" data-src="holder.js/80x80"/>
+	</div>
+	<div class="col-lg-1">
+		<h5><a id="app-update">修改</a></h5>
+		<button class="btn btn-default btn-xs" id="app-del">删除</button>
+	</div>
+</div>
 <br />
-<br />
-<table>
-	<tr>
-		<th>软件名：</th>
-		<td><span id="app-name">App Name</span></td>
-	</tr>
-	<tr>
-		<th>描述：</th>
-		<td><p id="app-desc">App Description</p></td>
-	</tr>
-	<tr>
-		<th>发布日期：</th>
-		<td><span id="app-pub-date">2013-10-09 12:10:10</span></td>
-	</tr>
-	<tr>
-		<th>更新日期：</th>
-		<td><span id="app-update-date">2013-10-09 12:10:10</span></td>
-	</tr>
-	<tr>
-		<th>版本：</th>
-		<td><span id="app-version">1.2.2</span></td>
-	</tr>
-	<tr>
-		<th>Router：</th>
-		<td><a id="app-router-url">http://www.example</a></td>
-	</tr>
-	<tr>
-		<th>IOS：</th>
-		<td><a id="app-ios-url">http://www.example</a></td>
-	</tr>
-	<tr>
-		<th>Android：</th>
-		<td><a id="app-android-url">http://www.example</a></td>
-	</tr>
-</table>
+<div class="row">
+	<div class="col-lg-6">
+		<table>
+			<tr>
+				<th>软件名：</th>
+				<td><span id="app-name">App Name</span></td>
+			</tr>
+			<tr>
+				<th>描述：</th>
+				<td><p id="app-desc">App Description</p></td>
+			</tr>
+			<tr>
+				<th>发布日期：</th>
+				<td><span id="app-pub-date">2013-10-09 12:10:10</span></td>
+			</tr>
+			<tr>
+				<th>更新日期：</th>
+				<td><span id="app-update-date">2013-10-09 12:10:10</span></td>
+			</tr>
+			<tr>
+				<th>版本：</th>
+				<td><span id="app-version">1.2.2</span></td>
+			</tr>
+			<tr>
+				<th>Router：</th>
+				<td><a id="app-router-url"></a></td>
+			</tr>
+			<tr>
+				<th>IOS：</th>
+				<td><a id="app-ios-url"></a></td>
+			</tr>
+			<tr>
+				<th>Android：</th>
+				<td><a id="app-android-url"></a></td>
+			</tr>
+		</table>
+	</div>
 </div>

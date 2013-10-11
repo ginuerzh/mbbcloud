@@ -30,7 +30,7 @@ func (this *RouterController) RouterList() {
 	list := routers.Routers()
 
 	for i, _ := range list {
-		if time.Since(list[i].LastAccess) < 5*time.Minute {
+		if time.Since(list[i].LastAccess.Value()) < 5*time.Minute {
 			list[i].Online = true
 		}
 	}
@@ -50,7 +50,7 @@ func (this *RouterController) Login() {
 			break
 		}
 
-		router.LoginTime = time.Now()
+		router.LoginTime = models.NewJsonTime(time.Now())
 		if err := router.Save(); err != nil {
 			log.Println(err)
 			this.Data["json"] = this.response(nil, err)
@@ -103,7 +103,7 @@ func (this *RouterController) Poll() {
 
 		dbRouter.CurDownlod = router.Download
 		dbRouter.CurUpload = router.Upload
-		dbRouter.LastAccess = time.Now()
+		dbRouter.LastAccess = models.NewJsonTime(time.Now())
 		if router.Users != nil {
 			dbRouter.Users = router.Users
 		}

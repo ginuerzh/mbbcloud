@@ -94,3 +94,62 @@ func (this *AppController) Pub() {
 
 	this.ServeJson()
 }
+
+func (this *AppController) Update() {
+	var app, dbApp models.App
+
+	for {
+		if err := json.Unmarshal(this.Ctx.Input.RequestBody, &app); err != nil {
+			log.Println(err)
+			this.Data["json"] = this.response(nil, &errors.JsonError)
+			break
+		}
+
+		if !bson.IsObjectIdHex(app.Id.Hex()) {
+			log.Println("invalid id")
+			this.Data["json"] = this.response(nil, &errors.InvalidParamsError)
+			break
+		}
+
+		if err := dbApp.FindOneBy("_id", app.Id); err != nil {
+			log.Println(err)
+			this.Data["json"] = this.response(nil, &errors.FileNotFoundError)
+			break
+		}
+
+		app.PubTime = dbApp.PubTime
+		app.UpdateTime = models.NewJsonTime(bson.Now())
+
+		if err := app.Update(); err != nil {
+			log.Println(err)
+			this.Data["json"] = this.response(nil, &errors.DbError)
+			break
+		}
+
+		this.Data["json"] = this.response(nil, nil)
+		break
+	}
+
+	this.ServeJson()
+}
+
+func (this *AppController) Delete() {
+	var app models.App
+	id := this.Ctx.Input.Params(":id")
+
+	for {
+		if !bson.IsObjectIdHex(id) {
+			log.Println("invalid id")
+			this.Data["json"] = this.response(nil, &errors.InvalidParamsError)
+			break
+		}
+
+		app.Id = bson.ObjectIdHex(id)
+		app.Delete()
+
+		this.Data["json"] = this.response(nil, nil)
+		break
+	}
+
+	this.ServeJson()
+}
