@@ -12,6 +12,7 @@
     <script src="/js/holder.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="/js/bootstrap.js"></script>
+	<script src="/js/jquery.cookie.js"></script>
   </head>
   <body>
 
@@ -32,6 +33,38 @@ function parseDuration(duration) {
 	var secs = Math.floor(duration / SECOND)
 	return days + "天" + hours + "时" + mins + "分" + secs + "秒"
 }
+
+function loginCheck(uid, rank) {
+	if (uid == "") {
+		$("#login-info").append('<a href="/web/login">登录</a>')
+	} else {
+		$("#login-info").text(uid).append(' <a href="/web/logout">登出</a>')
+	}
+}
+
+$(function(){
+	var c = $.cookie("uid")
+	var uid = ""
+	var rank = 0 
+	if (c) {
+		var z = c.split(":")
+		if (z.length == 2) {
+			uid = z[0]
+			rank = parseInt(z[1])
+		}
+	}
+	loginCheck(uid, rank)
+	
+	if (rank != 1) {
+		$(".admin-op").hide()
+		if (uid != "") {
+			$("#nav-router a").attr("href", "/web/router/" + uid)
+		}
+	} else {
+		$(".user-op").hide()
+	}
+})
+
 </script>
 
 <style type="text/css">
@@ -39,6 +72,7 @@ function parseDuration(duration) {
 </style>
 
 <div class="container">
+	<span class="pull-right" id="login-info"></span>
 	<h1>MBB Cloud Platform</h1>
 	<nav class="navbar navbar-default" role="navigation">
 		<div class="navbar-header">
@@ -51,10 +85,11 @@ function parseDuration(duration) {
 					<ul class="dropdown-menu">
 			          <li><a href="#">New</a></li>
 			          <li><a href="#">Top</a></li>
-			          <li><a href="/web/pub">Pub</a></li>
+			          <li class="admin-op"><a href="/web/app/pub">Pub</a></li>
 			        </ul>
 				</li>
-				<li id="nav-router"><a href="/web/routers">Routers</a>
+				<li id="nav-router" class="admin-op"><a href="/web/routers">Routers</a></li>
+				<li id="nav-router" class="user-op"><a href="/web/router/me">My Router</a></li>
 	        	</ul>
 	    </div>
 	</nav>

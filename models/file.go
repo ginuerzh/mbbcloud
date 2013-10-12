@@ -26,7 +26,7 @@ func (this *File) FindOneBy(key string, value interface{}) (e *errors.Error) {
 
 	if err := withCollection(C_File, query); err != nil {
 		if err == mgo.ErrNotFound {
-			e = &errors.UserNotFoundError
+			e = &errors.FileNotFoundError
 		} else {
 			e = &errors.DbError
 		}

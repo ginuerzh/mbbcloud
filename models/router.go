@@ -9,7 +9,7 @@ import (
 	//"time"
 )
 
-type User struct {
+type RouterUser struct {
 	Device   string `json:"device"`
 	Mac      string `json:"mac"`
 	Ip       string `json:"ip"`
@@ -17,19 +17,19 @@ type User struct {
 }
 
 type Router struct {
-	Imei        string   `json:"id"`
-	Mac         string   `json:"mac"`
-	Ip          string   `json:"ip"`
-	Download    uint64   `json:"download"`
-	Upload      uint64   `json:"upload"`
-	CurDownlod  uint64   `json:"cur_download" bson:"cur_download,omitempty"`
-	CurUpload   uint64   `json:"cur_upload" bson:"cur_upload,omitempty"`
-	Online      bool     `json:"online" bson:"-"`
-	Duration    int      `json:"duration"`
-	LoginTime   JsonTime `json:"login_time" bson:"login_time"`
-	LastAccess  JsonTime `json:"last_access" bson:"last_access,omitempty"`
-	AccessToken string   `json:"access_token" bson:"-"`
-	Users       []User   `json:"users" bson:",omitempty"`
+	Imei        string       `json:"id"`
+	Mac         string       `json:"mac"`
+	Ip          string       `json:"ip"`
+	Download    uint64       `json:"download"`
+	Upload      uint64       `json:"upload"`
+	CurDownlod  uint64       `json:"cur_download" bson:"cur_download,omitempty"`
+	CurUpload   uint64       `json:"cur_upload" bson:"cur_upload,omitempty"`
+	Online      bool         `json:"online" bson:"-"`
+	Duration    int          `json:"duration"`
+	LoginTime   JsonTime     `json:"login_time" bson:"login_time"`
+	LastAccess  JsonTime     `json:"last_access" bson:"last_access,omitempty"`
+	AccessToken string       `json:"access_token" bson:"-"`
+	Users       []RouterUser `json:"users" bson:",omitempty"`
 }
 
 type RouterList struct {

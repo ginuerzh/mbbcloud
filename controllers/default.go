@@ -26,6 +26,13 @@ var (
 	NSMQ          = NSPrefix + "mq:"
 )
 
+const (
+	CookieSecret = "61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o"
+	UserRank0    = 0 // rank for nobody
+	UserRank1    = 1 // rank admin
+	UserRank2    = 2 // rank common user
+)
+
 type BaseController struct {
 	beego.Controller
 }
