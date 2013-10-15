@@ -9,6 +9,7 @@ import (
 	"io"
 	"labix.org/v2/mgo/bson"
 	//"log"
+	"strconv"
 	//"time"
 )
 
@@ -72,15 +73,14 @@ func (this *FileController) Download() {
 		return
 	}
 
-	file, length, err := weedo.Download(fid)
+	file, err := weedo.Download(fid)
 	if err != nil {
 		this.Data["json"] = this.response(nil, &errors.FileNotFoundError)
 		this.ServeJson()
 		return
 	}
 	defer file.Close()
-
-	this.Ctx.ResponseWriter.Header().Set("Content-Length", string(length))
+	this.Ctx.ResponseWriter.Header().Set("Content-Length", strconv.FormatInt(f.Size, 10))
 	//this.Ctx.ResponseWriter.Header().Set("Content-Type", f.ContentType)
 	//this.Ctx.ResponseWriter.Header().Set("Content-Disposition", "filename="+f.Name)
 	io.Copy(this.Ctx.ResponseWriter, file)

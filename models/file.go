@@ -13,7 +13,7 @@ import (
 type File struct {
 	Fid         string
 	Name        string `bson:"filename"`
-	Size        int    `bson:"length"`
+	Size        int64  `bson:"length"`
 	Md5         string
 	ContentType string    `bson:"contentType"`
 	UploadDate  time.Time `bson:"uploadDate"`
