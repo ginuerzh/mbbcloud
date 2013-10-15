@@ -8,7 +8,7 @@ import (
 	"github.com/ginuerzh/weedo"
 	"io"
 	"labix.org/v2/mgo/bson"
-	//"log"
+	"log"
 	"strconv"
 	//"time"
 )
@@ -80,6 +80,7 @@ func (this *FileController) Download() {
 		return
 	}
 	defer file.Close()
+	log.Println("content-length:" + strconv.FormatInt(f.Size, 10))
 	this.Ctx.ResponseWriter.Header().Set("Content-Length", strconv.FormatInt(f.Size, 10))
 	//this.Ctx.ResponseWriter.Header().Set("Content-Type", f.ContentType)
 	//this.Ctx.ResponseWriter.Header().Set("Content-Disposition", "filename="+f.Name)
